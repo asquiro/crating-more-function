@@ -1,0 +1,149 @@
+import "package:flutter/material.dart";
+
+void main() {
+  runApp(
+    MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: "Exploring UI Widget",
+        home: SiForm(),
+        theme: ThemeData(
+          primaryColor: Colors.indigo,
+          accentColor: Colors.limeAccent,
+        )),
+  );
+}
+
+Widget getImage() {
+  AssetImage assetImage = AssetImage("images/love.jpeg");
+  Image image = Image(image: assetImage);
+  return Container(
+    child: image,
+  );
+}
+
+class SiForm extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _SiForming();
+  }
+}
+
+class _SiForming extends State<SiForm> {
+  var _currencies = ['Rubbies', 'Dollars', 'Naira', 'Others'];
+  final _minimumPadding = 5;
+  var _currentItemSelected = 'Rubbies';
+  TextEditingController principalController = TextEditingController();
+  TextEditingController yitController = TextEditingController();
+  TextEditingController termController = TextEditingController();
+  var displayResult = "";
+  @override
+  Widget build(BuildContext context) {
+    TextStyle textStyle = Theme.of(context).textTheme.title;
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Showing SI Calculator"),
+        ),
+        body: Container(
+          margin: EdgeInsets.all(_minimumPadding * 7),
+          child: Column(children: <Widget>[
+            getImage(),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: _minimumPadding * 2, bottom: _minimumPadding * 2),
+              child: TextField(
+                controller: principalController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Principal",
+                  hintText: "enter you principals number......eg 08086..",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: _minimumPadding * 2, bottom: _minimumPadding * 2),
+              child: TextField(
+                controller: yitController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Years in Term",
+                  hintText: "In percent..",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+            Container(width: _minimumPadding * 3),
+            Expanded(
+                child: Row(children: <Widget>[
+              TextField(
+                controller: termController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Term",
+                  hintText: "Term year..",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+              DropdownButton<String>(
+                items: _currencies.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                value: _currentItemSelected,
+                onChanged: (String? newSelectedItem) {
+                  _onCurrentItemSelected(newSelectedItem);
+                },
+              ),
+            ])),
+            Row(children: <Widget>[
+              Expanded(
+                  child: RaisedButton(
+                onPressed: () {
+                  setState(() {});
+                },
+                child: Text("calculate"),
+              )),
+              Expanded(
+                  child: RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    this.displayResult = _calculateTotalReturns();
+                  });
+                },
+                child: Text("reset"),
+              ))
+            ]),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: _minimumPadding * 3, bottom: _minimumPadding * 3),
+              child: Text(this.displayResult),
+            )
+          ]),
+        ));
+  }
+
+  void _onCurrentItemSelected(newSelectedItem) {
+    setState(() {
+      this._currentItemSelected = newSelectedItem;
+    });
+  }
+
+  String _calculateTotalReturns() {
+    double principal = double.parse(principalController.text);
+    double yit = double.parse(yitController.text);
+    double term = double.parse(termController.text);
+    double totalAmountPayable = principal + (principal * yit * term) / 100;
+    String result =
+        "after $term year, your investment will be worth $totalAmountPayable";
+    return result;
+  }
+}
